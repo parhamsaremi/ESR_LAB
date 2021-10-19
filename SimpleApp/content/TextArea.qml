@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt Virtual Keyboard module of the Qt Toolkit.
@@ -27,21 +27,27 @@
 **
 ****************************************************************************/
 
-#include <QQuickView>
-#include <QGuiApplication>
-#include <QQmlEngine>
+import QtQuick 2.10
+import QtQuick.Controls 2.3 as Controls
+import QtQuick.VirtualKeyboard 2.3
 
-int main(int argc, char *argv[])
-{
-    qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
+Controls.TextArea {
+    id: control
+    color: "#2B2C2E"
+    selectionColor: Qt.rgba(0.0, 0.0, 0.0, 0.15)
+    selectedTextColor: color
+    selectByMouse: true
+    font.pixelSize: Qt.application.font.pixelSize * 2
 
-    QGuiApplication app(argc, argv);
-    QQuickView view(QString("qrc:/%2").arg(MAIN_QML));
-    if (view.status() == QQuickView::Error)
-        return -1;
-    view.setResizeMode(QQuickView::SizeRootObjectToView);
+    property int enterKeyAction: EnterKeyAction.None
+    readonly property bool enterKeyEnabled: enterKeyAction === EnterKeyAction.None || text.length > 0 || inputMethodComposing
 
-    view.show();
+    EnterKeyAction.actionId: control.enterKeyAction
+    EnterKeyAction.enabled: control.enterKeyEnabled
 
-    return app.exec();
+    background: Rectangle {
+        color: "#FFFFFF"
+        border.width: 1
+        border.color: control.activeFocus ? "#5CAA15" : "#BDBEBF"
+    }
 }

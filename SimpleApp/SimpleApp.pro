@@ -1,24 +1,35 @@
-QT       += core gui
+TEMPLATE = app
+TARGET = basic
+QT += qml quick
+SOURCES += main.cpp
+CONFIG += link_pkgconfig
+static {
+    QT += svg
+    QTPLUGIN += qtvirtualkeyboardplugin
+}
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+target.path = $$[QT_INSTALL_EXAMPLES]/virtualkeyboard/basic
+INSTALLS += target
 
-CONFIG += c++11
+RESOURCES += \
+    demo.qrc \
+    demo.qrc
 
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+OTHER_FILES += \
+    Basic.qml \
+    basic-b2qt.qml \
+    content/AutoScroller.qml \
+    content/HandwritingModeButton.qml \
+    content/TextArea.qml \
+    content/TextField.qml \
 
-SOURCES += \
-    main.cpp \
-    simpleapp.cpp
+#disable-xcb {
+#    message("The disable-xcb option has been deprecated. Please use disable-desktop instead.")
+#    CONFIG += disable-desktop
+#}
 
-HEADERS += \
-    simpleapp.h
-
-FORMS += \
-    simpleapp.ui
-
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+disable-desktop|android-embedded|!isEmpty(CROSS_COMPILE)|qnx {
+    DEFINES += MAIN_QML=\\\"Basic.qml\\\"
+} else {
+    DEFINES += MAIN_QML=\\\"basic-b2qt.qml\\\"
+}
